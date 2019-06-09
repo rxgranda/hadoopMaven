@@ -21,6 +21,9 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.util.GenericOptionsParser;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.BasicConfigurator;
+
  class TaxiIDDatePair implements Writable, WritableComparable<TaxiIDDatePair> {
 
     private IntWritable taxiID = new IntWritable();                 // natural key
@@ -106,16 +109,18 @@ import org.apache.hadoop.util.GenericOptionsParser;
 
 
 public class TaxiRecords {
+    static Logger logger = Logger.getLogger(TaxiRecords.class);
 
-
+    private static final String EMPTY_STATUS = "'E'";
+    private static final String CLIENT_STATUS = "'M'";
+    private static final float SPEED_LIMIT= 200f;
 
 
     /* --- subsection 1.1 and 1.2 ------------------------------------------ */
     public static class TaxiDriverMapper
             extends Mapper<LongWritable, Text, TaxiIDDatePair, Text> {
-        private static final int MISSING = 9999;
-        private static final String EMPTY_STATUS = "E";
-        private static final String CLIENT_STATUS = "M";
+
+
 
         static final float radius=6371.009f;
         static final float toRadians= (float)(Math.PI / 180);
@@ -156,15 +161,20 @@ public class TaxiRecords {
                 float starLong = Float.parseFloat(info[3]);
 
                 dateEnd = info[info.length - 4];
-                float endLat = Float.parseFloat(info[info.length - 3]);
-                float endLong =Float.parseFloat( info[info.length - 2]);
-
+                float endLat=0;
+                float endLong=0;
+                try{
+                    endLat = Float.parseFloat(info[info.length - 3]);
+                    endLong =Float.parseFloat( info[info.length - 2]);
+                }catch (Exception e){
+                   return;
+                }
                 String statusStart = info[4];
-                statusStart=statusStart.substring(1,2);
+                //statusStart=statusStart.substring(1,2);
                 String statusEnd = info[info.length - 1];
-                statusEnd=statusEnd.substring(1,2);
+                //statusEnd=statusEnd.substring(1,2);
                 if(statusStart.equals(EMPTY_STATUS)&& statusEnd.equals(EMPTY_STATUS)){
-                    System.out.println("[Skip empty track]");
+                    //System.out.println("[Skip empty track]");
                     return;
                 }
 
@@ -189,14 +199,16 @@ public class TaxiRecords {
 
 
                     float duration = Duration.between(startDateTime, endDateTime).getSeconds()/3600f;
-                    long startDateMillis=startDateTime.toInstant().toEpochMilli();
+                    //long startDateMillis=startDateTime.toInstant().toEpochMilli();
+                    long startDateUnix=startDateTime.toEpochSecond();
                     double speed=distance/duration;  /// Units: KM/hrs
 
-                    //infoNew.set(""+starLat+"&"+starLong+"&"+endLat+"&"+endLong+"&"+speed+"&"+statusStart+"&"+statusEnd);
-                    infoNew.set(line+","+speed);
+                    infoNew.set(id+","+startDateUnix+","+info[2]+","+info[3]+","+statusStart+","+endDateTime.toEpochSecond()+","+info[info.length - 3]+","+info[info.length - 2]+","+statusEnd+","+speed);
+
+                    //infoNew.set(id+","+st+speed);
                     //TaxiIDDatePair newKey=new TaxiIDDatePair(id,startDateMillis);
                     newKey.setTaxiID(id);
-                    newKey.setStartDateMillis(startDateMillis);
+                    newKey.setStartDateMillis(startDateUnix);
                     context.write(newKey,infoNew);
                     //if (speed < 200) {
                     //    return distance;
@@ -204,7 +216,7 @@ public class TaxiRecords {
                     //    System.out.println("!!--Speed overeceed: " );
                     //}
                 }else{
-                    System.out.println(" <Point out of US map>");
+                    System.out.println("Invalid size fields: "+line);
                 }
 
 //            }else{
@@ -251,23 +263,78 @@ public class TaxiRecords {
             extends Reducer<TaxiIDDatePair, Text, IntWritable, Text> {
         Text result = new Text();
         String resultS="";
+        String line;
+        String [] info;
+        String dateStart,dateEnd;
+        public final int offsetNewParameters=1;
+        String starLat,starLong,endLat,endLong;
         @Override
         public void reduce(TaxiIDDatePair key, Iterable<Text> values, Context context)
                 throws IOException, InterruptedException {
+            line="";
             //System.out.println("En el reducer");
             resultS="";
+            boolean startedTrip=false;
+
+
+
             for (Text value : values) {
-                resultS +=value.toString()+'\n';
+                line=value.toString();
+                info=line.split(",");
+                //System.out.println(info.length);
+                //System.out.println(line);
+                String statusStart = info[4];
+                //statusStart=statusStart.substring(1,2);
+                String statusEnd = info[info.length - 1 -offsetNewParameters];
+                //statusEnd=statusEnd.substring(1,2);
+                float speed=Float.parseFloat(info[info.length-1]);
+                if(statusStart.equals(EMPTY_STATUS)&&statusEnd.equals(CLIENT_STATUS)&&!startedTrip){
+                    startedTrip=true;
+                    //dateStart = info[1];
+                    //starLat = info[2];
+                    //starLong = info[3];
+                    dateStart = info[info.length - 4 -offsetNewParameters];
+                    starLat = info[info.length - 3-offsetNewParameters];
+                    starLong =info[info.length - 2-offsetNewParameters];
+                }else if(statusStart.equals(CLIENT_STATUS)&&statusEnd.equals(EMPTY_STATUS)&&startedTrip){
+                    //dateEnd = info[info.length - 4 -offsetNewParameters];
+                    //endLat = info[info.length - 3-offsetNewParameters];
+                    //endLong =info[info.length - 2-offsetNewParameters];
+
+                    dateEnd = info[1];
+                    endLat = info[2];
+                    endLong = info[3];
+
+                    resultS=dateStart+" "+starLat+" "+starLong+" "+dateEnd+" "+endLat+" "+endLong+' '+info[info.length-1];
+                    result.set(resultS);
+                    context.write(key.getTaxiID(),result);
+                    startedTrip=false;
+                }else if(speed>=SPEED_LIMIT&&statusStart.equals(CLIENT_STATUS)&&statusEnd.equals(CLIENT_STATUS)&&startedTrip){
+                    startedTrip=false;
+                }else if(startedTrip&&statusStart.equals(EMPTY_STATUS)&&statusEnd.equals(CLIENT_STATUS)){  //Discard info from previus missing star trip
+                    startedTrip=true;
+                    //dateStart = info[1];
+                    //starLat = info[2];
+                    //starLong = info[3];
+
+                    dateStart = info[info.length - 4 -offsetNewParameters];
+                    starLat = info[info.length - 3-offsetNewParameters];
+                    starLong =info[info.length - 2-offsetNewParameters];
+                    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ " +key.getTaxiID());
+                }
+
+
+
             }
-            result.set(resultS);
+            //result.set(resultS);
             //System.out.println(key.getTaxiID().hashCode());
-            System.out.println(key.getTaxiID()+" "+key.getStartDateMillis()+"  "+result);
-            context.write(key.getTaxiID(),result);
+            //System.out.println(key.getTaxiID()+" "+key.getStartDateMillis()+"  "+result);
+            //context.write(key.getTaxiID(),result);
         }
     }
 
     public static void main(String[] args) throws Exception {
-
+        BasicConfigurator.configure();
         Configuration conf = new Configuration();
         GenericOptionsParser optionParser = new GenericOptionsParser(conf, args);
         String[] remainingArgs = optionParser.getRemainingArgs();

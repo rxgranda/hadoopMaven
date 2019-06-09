@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="16cbc325-8ed5-455d-a9e0-179ed16b8c34" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/src/main/java/TaxiRecords.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaxiRecords.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.segments" beforeDir="false" afterPath="$PROJECT_DIR$/test.segments" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
@@ -17,11 +18,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/TaxiRecords.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2453">
-              <caret line="117" column="54" selection-start-line="117" selection-start-column="54" selection-end-line="117" selection-end-column="54" />
+            <state relative-caret-position="387">
+              <caret line="167" column="27" selection-start-line="167" selection-start-column="27" selection-end-line="167" selection-end-column="27" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1443#1444#0" expanded="true" />
@@ -36,9 +37,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test.segments">
-          <provider selected="true" editor-type-id="text-editor" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="200">
+              <caret line="5" column="93" selection-start-line="5" selection-start-column="93" selection-end-line="5" selection-end-column="93" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -118,6 +123,7 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/Test2.java" />
         <option value="$PROJECT_DIR$/src/main/java/TaxiRecords.java" />
+        <option value="$PROJECT_DIR$/test.segments" />
       </list>
     </option>
   </component>
@@ -262,7 +268,7 @@
     <frame x="134" y="35" width="3066" height="1765" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.31061116" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.31061116" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -271,8 +277,8 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.2341561" />
-      <window_info anchor="bottom" id="Debug" order="3" visible="true" weight="0.39959973" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.2341561" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39959973" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -323,7 +329,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/TaxiRecords.java</url>
-          <line>319</line>
+          <line>320</line>
           <properties />
           <option name="timeStamp" value="1" />
         </line-breakpoint>
@@ -335,7 +341,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/TaxiRecords.java</url>
-          <line>263</line>
+          <line>264</line>
           <properties />
           <option name="timeStamp" value="11" />
         </line-breakpoint>
@@ -404,13 +410,10 @@
     <entry file="file://$PROJECT_DIR$/output/1560072083693/part-r-00000">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/test.segments">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/TaxiRecords.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2453">
-          <caret line="117" column="54" selection-start-line="117" selection-start-column="54" selection-end-line="117" selection-end-column="54" />
+        <state relative-caret-position="387">
+          <caret line="167" column="27" selection-start-line="167" selection-start-column="27" selection-end-line="167" selection-end-column="27" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1443#1444#0" expanded="true" />
@@ -421,6 +424,13 @@
             <element signature="e#7961#7962#0" expanded="true" />
             <element signature="e#8280#8309#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.segments">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="5" column="93" selection-start-line="5" selection-start-column="93" selection-end-line="5" selection-end-column="93" />
         </state>
       </provider>
     </entry>

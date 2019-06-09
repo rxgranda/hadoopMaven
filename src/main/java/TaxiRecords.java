@@ -165,6 +165,7 @@ public class TaxiRecords {
                 statusEnd=statusEnd.substring(1,2);
                 if(statusStart.equals(EMPTY_STATUS)&& statusEnd.equals(EMPTY_STATUS)){
                     System.out.println("[Skip empty track]");
+                    return;
                 }
 
 

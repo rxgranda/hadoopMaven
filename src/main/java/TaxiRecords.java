@@ -113,10 +113,16 @@ public class TaxiRecords {
     /* --- subsection 1.1 and 1.2 ------------------------------------------ */
     public static class TaxiDriverMapper
             extends Mapper<LongWritable, Text, TaxiIDDatePair, Text> {
-        //private static final int MISSING = 9999;
+        private static final int MISSING = 9999;
+        private static final String EMPTY_STATUS = "E";
+        private static final String CLIENT_STATUS = "M";
 
-
-
+        static final float radius=6371.009f;
+        static final float toRadians= (float)(Math.PI / 180);
+        static final float top = 49.3457868f ;// north lat
+        static final float left = -124.7844079f;// west long
+        static final float right = -66.9513812f; // east long
+        static final float bottom =  24.7433195f; // south lat
 
         static final ZoneId zoneId = ZoneId.of("America/Los_Angeles");
         static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -143,40 +149,66 @@ public class TaxiRecords {
                 if(info.length>9)
                     System.out.println("[Exceeded] "+line);
 
+
                 int id = Integer.parseInt(info[0]);
                 dateStart = info[1];
-                dateEnd = info[info.length - 4];
+                float starLat = Float.parseFloat(info[2]);
+                float starLong = Float.parseFloat(info[3]);
 
-                try{
-                    dateStart=dateStart.substring(1,dateStart.length()-1);
-                    dateEnd=dateEnd.substring(1,dateEnd.length()-1);
-                    startDateTime = ZonedDateTime.of(LocalDateTime.parse(dateStart,formatter), zoneId);
-                    endDateTime = ZonedDateTime.of(LocalDateTime.parse(dateEnd,formatter), zoneId);
-                }catch (DateTimeParseException e){
-                    System.out.println("**Bad date format "+line);
-                    return;
+                dateEnd = info[info.length - 4];
+                float endLat = Float.parseFloat(info[info.length - 3]);
+                float endLong =Float.parseFloat( info[info.length - 2]);
+
+                String statusStart = info[4];
+                statusStart=statusStart.substring(1,2);
+                String statusEnd = info[info.length - 1];
+                statusEnd=statusEnd.substring(1,2);
+                if(statusStart.equals(EMPTY_STATUS)&& statusEnd.equals(EMPTY_STATUS)){
+                    System.out.println("[Skip empty track]");
                 }
 
-                float duration = Duration.between(startDateTime, endDateTime).getSeconds()/3600f;
-                long startDateMillis=startDateTime.toInstant().toEpochMilli();
 
 
-                //infoNew.set(""+starLat+"&"+starLong+"&"+endLat+"&"+endLong+"&"+speed+"&"+statusStart+"&"+statusEnd);
-                infoNew.set(line+","+duration);
-                //TaxiIDDatePair newKey=new TaxiIDDatePair(id,startDateMillis);
-                newKey.setTaxiID(id);
-                newKey.setStartDateMillis(startDateMillis);
-                context.write(newKey,infoNew);
-                //if (speed < 200) {
-                //    return distance;
-                //} else {
-                //    System.out.println("!!--Speed overeceed: " );
-                //}
+                //if  ((bottom<starLat && starLat<top )&& (bottom<endLat&&endLat<top )&&(left<starLong&&starLong<right)&&(left<endLong&&endLong<right)){
+                    double deltaLat = Math.pow((starLat - endLat) * toRadians, 2f);
+                    double deltaLong = (starLong - endLong) * toRadians;
+                    double cosMeanLatitude = Math.cos(((starLat + endLat) / 2) * toRadians);
+                    double second = Math.pow(cosMeanLatitude * deltaLong, 2);
+                    double distance = radius * Math.sqrt(deltaLat + second);
+
+                    try{
+                        dateStart=dateStart.substring(1,dateStart.length()-1);
+                        dateEnd=dateEnd.substring(1,dateEnd.length()-1);
+                        startDateTime = ZonedDateTime.of(LocalDateTime.parse(dateStart,formatter), zoneId);
+                        endDateTime = ZonedDateTime.of(LocalDateTime.parse(dateEnd,formatter), zoneId);
+                    }catch (DateTimeParseException e){
+                        System.out.println("**Bad date format "+line);
+                        return;
+                    }
 
 
-            }else{
-                System.out.println("Invalid size fields: "+line);
-            }
+                    float duration = Duration.between(startDateTime, endDateTime).getSeconds()/3600f;
+                    long startDateMillis=startDateTime.toInstant().toEpochMilli();
+                    double speed=distance/duration;  /// Units: KM/hrs
+
+                    //infoNew.set(""+starLat+"&"+starLong+"&"+endLat+"&"+endLong+"&"+speed+"&"+statusStart+"&"+statusEnd);
+                    infoNew.set(line+","+speed);
+                    //TaxiIDDatePair newKey=new TaxiIDDatePair(id,startDateMillis);
+                    newKey.setTaxiID(id);
+                    newKey.setStartDateMillis(startDateMillis);
+                    context.write(newKey,infoNew);
+                    //if (speed < 200) {
+                    //    return distance;
+                    //} else {
+                    //    System.out.println("!!--Speed overeceed: " );
+                    //}
+                }else{
+                    System.out.println(" <Point out of US map>");
+                }
+
+//            }else{
+//                System.out.println("Invalid size fields: "+line);
+//            }
 
 
 
@@ -216,14 +248,6 @@ public class TaxiRecords {
 
     public static class TaxiDriverReducer
             extends Reducer<TaxiIDDatePair, Text, IntWritable, Text> {
-        private static final String EMPTY_STATUS = "E";
-        private static final String CLIENT_STATUS = "M";
-        static final float radius=6371.009f;
-        static final float toRadians= (float)(Math.PI / 180);
-        static final float top = 49.3457868f ;// north lat
-        static final float left = -124.7844079f;// west long
-        static final float right = -66.9513812f; // east long
-        static final float bottom =  24.7433195f; // south lat
         Text result = new Text();
         String resultS="";
         @Override
@@ -231,41 +255,8 @@ public class TaxiRecords {
                 throws IOException, InterruptedException {
             //System.out.println("En el reducer");
             resultS="";
-            for (Text line : values) {
-
-                String[]info=line.toString().split(",");
-                String statusStart = info[4];
-                statusStart=statusStart.substring(1,2);
-                String statusEnd = info[info.length - 2];
-                statusEnd=statusEnd.substring(1,2);
-                double speed=0;
-                if(statusStart.equals(EMPTY_STATUS)&& statusEnd.equals(EMPTY_STATUS)){
-                    System.out.println("[Skip empty track]");
-                }
-
-                float starLat = Float.parseFloat(info[2]);
-                float starLong = Float.parseFloat(info[3]);
-                float endLat = Float.parseFloat(info[info.length - 4]);
-                float endLong =Float.parseFloat( info[info.length - 3]);
-                float duration=Float.parseFloat(info[info.length - 1]);
-
-                if  ((bottom<starLat && starLat<top )&& (bottom<endLat&&endLat<top )&&(left<starLong&&starLong<right)&&(left<endLong&&endLong<right)){
-                    double deltaLat = Math.pow((starLat - endLat) * toRadians, 2f);
-                    double deltaLong = (starLong - endLong) * toRadians;
-                    double cosMeanLatitude = Math.cos(((starLat + endLat) / 2) * toRadians);
-                    double second = Math.pow(cosMeanLatitude * deltaLong, 2);
-                    double distance = radius * Math.sqrt(deltaLat + second);
-
-                    speed=distance/duration;  /// Units: KM/hrs
-
-                }else{
-                    System.out.println(" <Point out of US map>");
-                }
-
-
-
-                resultS +="\n"+line.toString()+","+speed;
-                int a=0;
+            for (Text value : values) {
+                resultS +=value.toString()+'\n';
             }
             result.set(resultS);
             //System.out.println(key.getTaxiID().hashCode());

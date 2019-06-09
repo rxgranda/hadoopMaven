@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="16cbc325-8ed5-455d-a9e0-179ed16b8c34" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/TaxiRecords.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaxiRecords.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -22,8 +20,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/TaxiRecords.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5227">
-              <caret line="268" column="13" lean-forward="true" selection-start-line="268" selection-start-column="13" selection-end-line="268" selection-end-column="13" />
+            <state relative-caret-position="-2453">
+              <caret line="117" column="54" selection-start-line="117" selection-start-column="54" selection-end-line="117" selection-end-column="54" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#1443#1444#0" expanded="true" />
@@ -32,7 +30,7 @@
                 <element signature="e#1680#1681#0" expanded="true" />
                 <element signature="e#7906#7907#0" expanded="true" />
                 <element signature="e#7961#7962#0" expanded="true" />
-                <element signature="e#6698#6727#0" expanded="true" />
+                <element signature="e#8280#8309#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -325,7 +323,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/TaxiRecords.java</url>
-          <line>328</line>
+          <line>319</line>
           <properties />
           <option name="timeStamp" value="1" />
         </line-breakpoint>
@@ -337,15 +335,9 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/TaxiRecords.java</url>
-          <line>272</line>
+          <line>263</line>
           <properties />
           <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/TaxiRecords.java</url>
-          <line>267</line>
-          <properties />
-          <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -417,8 +409,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/TaxiRecords.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5227">
-          <caret line="268" column="13" lean-forward="true" selection-start-line="268" selection-start-column="13" selection-end-line="268" selection-end-column="13" />
+        <state relative-caret-position="-2453">
+          <caret line="117" column="54" selection-start-line="117" selection-start-column="54" selection-end-line="117" selection-end-column="54" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1443#1444#0" expanded="true" />
@@ -427,7 +419,7 @@
             <element signature="e#1680#1681#0" expanded="true" />
             <element signature="e#7906#7907#0" expanded="true" />
             <element signature="e#7961#7962#0" expanded="true" />
-            <element signature="e#6698#6727#0" expanded="true" />
+            <element signature="e#8280#8309#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -3,7 +3,7 @@ JAVA_BUILD_DIR=java_build
 HADOOP_INPUT=/input_text.txt
 HADOOP_OUTPUT=/hadoop_output
 
-RECORDS_TAXI=/test.segments
+RECORDS_TAXI=/2010_03.segments
 OUTPUT_TAXI=/trips
 
 
@@ -34,6 +34,6 @@ run_hadoop: $(JAVA_BUILD_DIR)/WordCount.jar
 
 .PHONY: proyecto
 proyecto: $(JAVA_BUILD_DIR)/TaxiRecords.jar
-	$(HADOOP_INSTALL)/bin/hadoop dfs -rmr $(OUTPUT_TAXI)
+	#$(HADOOP_INSTALL)/bin/hadoop dfs -rmr $(OUTPUT_TAXI)
 	$(HADOOP_INSTALL)/bin/hadoop jar $(JAVA_BUILD_DIR)/TaxiRecords.jar TaxiRecords $(RECORDS_TAXI) $(OUTPUT_TAXI)
 

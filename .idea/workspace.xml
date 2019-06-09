@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="16cbc325-8ed5-455d-a9e0-179ed16b8c34" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Makefile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/TaxiRecords.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/TaxiRecords.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test.segments" beforeDir="false" afterPath="$PROJECT_DIR$/test.segments" afterDir="false" />
     </list>
@@ -20,17 +20,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/TaxiRecords.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2479">
-              <caret line="321" column="72" selection-start-line="321" selection-start-column="72" selection-end-line="321" selection-end-column="72" />
+            <state relative-caret-position="280">
+              <caret line="331" column="22" selection-start-line="331" selection-start-column="22" selection-end-line="331" selection-end-column="22" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1443#1444#0" expanded="true" />
-                <element signature="e#1478#1479#0" expanded="true" />
-                <element signature="e#1625#1626#0" expanded="true" />
-                <element signature="e#1679#1680#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -39,7 +35,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/output/1560100528203/part-r-00000">
           <provider selected="true" editor-type-id="LargeFileEditor">
-            <state relative-caret-position="1151">
+            <state relative-caret-position="619240">
               <caret line="15481" column="9" selection-start-line="15481" selection-start-column="9" selection-end-line="15481" selection-end-column="9" />
             </state>
           </provider>
@@ -48,7 +44,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/2010_03.trips">
           <provider selected="true" editor-type-id="LargeFileEditor">
-            <state relative-caret-position="2111">
+            <state relative-caret-position="744400">
               <caret line="18610" column="68" selection-start-line="18610" selection-start-column="68" selection-end-line="18610" selection-end-column="68" />
             </state>
           </provider>
@@ -57,8 +53,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.segments">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="754">
+            <state relative-caret-position="1160">
               <caret line="29" column="70" selection-start-line="29" selection-start-column="70" selection-end-line="29" selection-end-column="78" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/Makefile">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="200">
+              <caret line="5" column="21" selection-start-line="5" selection-start-column="21" selection-end-line="5" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -77,9 +82,9 @@
       <find>this</find>
       <find>No appenders could be found for logger</find>
       <find>taxiD</find>
-      <find>Skip empty track</find>
       <find>1267402225</find>
       <find>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@</find>
+      <find>Skip empty track</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -94,6 +99,7 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/test.segments" />
         <option value="$PROJECT_DIR$/src/main/java/TaxiRecords.java" />
+        <option value="$PROJECT_DIR$/src/main/java/Makefile" />
       </list>
     </option>
   </component>
@@ -197,7 +203,7 @@
     <configuration name="TaxiRecords" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="TaxiRecords" />
       <module name="assignment4MV" />
-      <option name="PROGRAM_PARAMETERS" value="2010_03.segments output" />
+      <option name="PROGRAM_PARAMETERS" value="all.segments output" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -245,8 +251,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="134" y="35" width="3066" height="1765" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.3146407" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.31900606" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -255,13 +262,13 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32955304" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.4089393" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.4089393" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39959973" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
+      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.32955304" />
+      <window_info anchor="bottom" id="Event Log" order="8" sideWeight="0.5003358" side_tool="true" weight="0.4089393" />
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.32993016" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
@@ -307,7 +314,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/TaxiRecords.java</url>
-          <line>387</line>
+          <line>399</line>
           <properties />
           <option name="timeStamp" value="1" />
         </line-breakpoint>
@@ -319,13 +326,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/TaxiRecords.java</url>
-          <line>331</line>
+          <line>340</line>
           <properties />
           <option name="timeStamp" value="11" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/TaxiRecords.java</url>
-          <line>169</line>
+          <line>173</line>
           <properties />
           <option name="timeStamp" value="12" />
         </line-breakpoint>
@@ -373,9 +380,6 @@
           </folding>
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/Makefile">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/output/TODOSSS/part-r-00000">
       <provider selected="true" editor-type-id="text-editor">
@@ -467,41 +471,44 @@
     <entry file="file://$PROJECT_DIR$/output/1560100144647/part-r-00000">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/test.segments">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="754">
-          <caret line="29" column="70" selection-start-line="29" selection-start-column="70" selection-end-line="29" selection-end-column="78" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/output/1560100232728/part-r-00000">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/output/1560100528203/part-r-00000">
       <provider selected="true" editor-type-id="LargeFileEditor">
-        <state relative-caret-position="1151">
+        <state relative-caret-position="619240">
           <caret line="15481" column="9" selection-start-line="15481" selection-start-column="9" selection-end-line="15481" selection-end-column="9" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/2010_03.trips">
       <provider selected="true" editor-type-id="LargeFileEditor">
-        <state relative-caret-position="2111">
+        <state relative-caret-position="744400">
           <caret line="18610" column="68" selection-start-line="18610" selection-start-column="68" selection-end-line="18610" selection-end-column="68" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test.segments">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1160">
+          <caret line="29" column="70" selection-start-line="29" selection-start-column="70" selection-end-line="29" selection-end-column="78" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/TaxiRecords.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2479">
-          <caret line="321" column="72" selection-start-line="321" selection-start-column="72" selection-end-line="321" selection-end-column="72" />
+        <state relative-caret-position="280">
+          <caret line="331" column="22" selection-start-line="331" selection-start-column="22" selection-end-line="331" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1443#1444#0" expanded="true" />
-            <element signature="e#1478#1479#0" expanded="true" />
-            <element signature="e#1625#1626#0" expanded="true" />
-            <element signature="e#1679#1680#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="5" column="21" selection-start-line="5" selection-start-column="21" selection-end-line="5" selection-end-column="21" />
         </state>
       </provider>
     </entry>

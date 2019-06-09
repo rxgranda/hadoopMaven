@@ -11,6 +11,7 @@ import java.time.format.DateTimeParseException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
+import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Partitioner;
@@ -157,16 +158,19 @@ public class TaxiRecords {
 
                 int id = Integer.parseInt(info[0]);
                 dateStart = info[1];
-                float starLat = Float.parseFloat(info[2]);
-                float starLong = Float.parseFloat(info[3]);
+                float starLat = 0;
+                float starLong = 0;
 
                 dateEnd = info[info.length - 4];
                 float endLat=0;
                 float endLong=0;
                 try{
+                    starLat = Float.parseFloat(info[2]);
+                    starLong = Float.parseFloat(info[3]);
                     endLat = Float.parseFloat(info[info.length - 3]);
                     endLong =Float.parseFloat( info[info.length - 2]);
                 }catch (Exception e){
+                    System.out.println("Error parsing latitudes: "+line);
                    return;
                 }
                 String statusStart = info[4];
@@ -207,6 +211,11 @@ public class TaxiRecords {
 
                     //infoNew.set(id+","+st+speed);
                     //TaxiIDDatePair newKey=new TaxiIDDatePair(id,startDateMillis);
+
+                    if(statusStart.equals(CLIENT_STATUS)&& statusEnd.equals(CLIENT_STATUS)&&speed<SPEED_LIMIT){
+                        //System.out.println("[Skip empty track]");
+                        return;
+                    }
                     newKey.setTaxiID(id);
                     newKey.setStartDateMillis(startDateUnix);
                     context.write(newKey,infoNew);
@@ -305,7 +314,7 @@ public class TaxiRecords {
                     endLat = info[2];
                     endLong = info[3];
 
-                    resultS=dateStart+" "+starLat+" "+starLong+" "+dateEnd+" "+endLat+" "+endLong+' '+info[info.length-1];
+                    resultS=dateStart+" "+starLat+" "+starLong+" "+dateEnd+" "+endLat+" "+endLong;
                     result.set(resultS);
                     context.write(key.getTaxiID(),result);
                     startedTrip=false;
@@ -320,7 +329,7 @@ public class TaxiRecords {
                     dateStart = info[info.length - 4 -offsetNewParameters];
                     starLat = info[info.length - 3-offsetNewParameters];
                     starLong =info[info.length - 2-offsetNewParameters];
-                    System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ " +key.getTaxiID());
+                    //System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ " +key.getTaxiID());
                 }
 
 
@@ -336,6 +345,8 @@ public class TaxiRecords {
     public static void main(String[] args) throws Exception {
         BasicConfigurator.configure();
         Configuration conf = new Configuration();
+        //conf.setBoolean("mapreduce.map.output.compress", true);
+        //conf.set("mapreduce.map.output.compress.codec", "org.apache.hadoop.io.compress.SnappyCodec");
         GenericOptionsParser optionParser = new GenericOptionsParser(conf, args);
         String[] remainingArgs = optionParser.getRemainingArgs();
         if ((remainingArgs.length != 2) ) {
@@ -365,7 +376,8 @@ public class TaxiRecords {
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]+"/"+System.currentTimeMillis()));
-
+        //FileOutputFormat.setCompressOutput(job, true);
+        //FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);
         System.exit(job.waitForCompletion(true) ? 0 : 1);
 
 

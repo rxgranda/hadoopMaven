@@ -1,10 +1,7 @@
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
@@ -115,6 +112,12 @@ public class TaxiRecords {
     private static final String EMPTY_STATUS = "'E'";
     private static final String CLIENT_STATUS = "'M'";
     private static final float SPEED_LIMIT= 200f;
+    static final float radius=6371.009f;
+    static final float toRadians= (float)(Math.PI / 180);
+    static final float top = 49.3457868f ;// north lat
+    static final float left = -124.7844079f;// west long
+    static final float right = -66.9513812f; // east long
+    static final float bottom =  24.7433195f; // south lat
 
 
     /* --- subsection 1.1 and 1.2 ------------------------------------------ */
@@ -123,12 +126,7 @@ public class TaxiRecords {
 
 
 
-        static final float radius=6371.009f;
-        static final float toRadians= (float)(Math.PI / 180);
-        static final float top = 49.3457868f ;// north lat
-        static final float left = -124.7844079f;// west long
-        static final float right = -66.9513812f; // east long
-        static final float bottom =  24.7433195f; // south lat
+
 
         static final ZoneId zoneId = ZoneId.of("America/Los_Angeles");
         static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -194,8 +192,8 @@ public class TaxiRecords {
                     try{
                         dateStart=dateStart.substring(1,dateStart.length()-1);
                         dateEnd=dateEnd.substring(1,dateEnd.length()-1);
-                        startDateTime = ZonedDateTime.of(LocalDateTime.parse(dateStart,formatter), zoneId);
-                        endDateTime = ZonedDateTime.of(LocalDateTime.parse(dateEnd,formatter), zoneId);
+                        startDateTime = ZonedDateTime.of(LocalDateTime.parse(dateStart,formatter),ZoneId.of("UTC")).toInstant().atZone( zoneId);
+                        endDateTime = ZonedDateTime.of(LocalDateTime.parse(dateEnd,formatter),ZoneId.of("UTC")).toInstant().atZone( zoneId);
                     }catch (DateTimeParseException e){
                         System.out.println("**Bad date format "+line);
                         return;
@@ -227,13 +225,6 @@ public class TaxiRecords {
                 }else{
                     System.out.println("Invalid size fields: "+line);
                 }
-
-//            }else{
-//                System.out.println("Invalid size fields: "+line);
-//            }
-
-
-
         }
     }
 
@@ -314,7 +305,7 @@ public class TaxiRecords {
                     endLat = info[2];
                     endLong = info[3];
 
-                    resultS=dateStart+" "+starLat+" "+starLong+" "+dateEnd+" "+endLat+" "+endLong;
+                    resultS=dateStart+"\t"+starLat+"\t"+starLong+"\t"+dateEnd+"\t"+endLat+"\t"+endLong;
                     result.set(resultS);
                     context.write(key.getTaxiID(),result);
                     startedTrip=false;
@@ -342,44 +333,192 @@ public class TaxiRecords {
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        BasicConfigurator.configure();
-        Configuration conf = new Configuration();
-        //conf.setBoolean("mapreduce.map.output.compress", true);
-        //conf.set("mapreduce.map.output.compress.codec", "org.apache.hadoop.io.compress.SnappyCodec");
-        GenericOptionsParser optionParser = new GenericOptionsParser(conf, args);
-        String[] remainingArgs = optionParser.getRemainingArgs();
-        if ((remainingArgs.length != 2) ) {
-            System.err.println("Usage: We need <input path> <output path>");
-            System.exit(2);
+
+
+    public static class YearMonthRevenueMapper
+            extends Mapper<LongWritable, Text, IntWritable, FloatWritable> {
+
+
+        static final float airportLat=37.62131f;
+        static final float airportLong=-122.37896f;
+        static final ZoneId zoneId = ZoneId.of("America/Los_Angeles");
+        Instant i;
+        //IntWritable key=IntWritable();
+
+        @Override
+        public void map(LongWritable key, Text value, Context context)
+                throws IOException, InterruptedException {
+            String[] fields=value.toString().split("\t");
+            //int taxiId=fields[0];
+
+            float startLat=0;
+            float startLong=0;
+            float endLat=0;
+            float endLong=0;
+
+            try {
+                startLat=Float.parseFloat(fields[2]);
+                startLong=Float.parseFloat(fields[3]);
+                endLat=Float.parseFloat(fields[5]);
+                endLong=Float.parseFloat(fields[6]);
+            } catch (Exception e){
+                System.out.println("AAAAAAAAAAA");
+                System.out.println(value.toString());
+                return;
+            }
+
+
+
+
+            double deltaLat = Math.pow((startLat - airportLat) * toRadians, 2f);
+            double deltaLong = (startLong - airportLong) * toRadians;
+            double cosMeanLatitude = Math.cos(((startLat + airportLat) / 2) * toRadians);
+            double second = Math.pow(cosMeanLatitude * deltaLong, 2);
+            double distanceRideStartingAtAirport = radius * Math.sqrt(deltaLat + second);
+
+
+            deltaLat = Math.pow((endLat - airportLat) * toRadians, 2f);
+            deltaLong = (endLong - airportLong) * toRadians;
+            cosMeanLatitude = Math.cos(((endLat + airportLat) / 2) * toRadians);
+            second = Math.pow(cosMeanLatitude * deltaLong, 2);
+            double distanceRideEndingAtAirport = radius * Math.sqrt(deltaLat + second);
+
+
+
+            if(Math.abs(distanceRideStartingAtAirport)<=1.d||Math.abs(distanceRideEndingAtAirport)<=1d){
+                deltaLat = Math.pow((startLat - endLat) * toRadians, 2f);
+                deltaLong = (startLong - endLong) * toRadians;
+                cosMeanLatitude = Math.cos(((startLat + endLat) / 2) * toRadians);
+                second = Math.pow(cosMeanLatitude * deltaLong, 2);
+                double distance = radius * Math.sqrt(deltaLat + second);
+                float fee=3.5f+Math.abs((float)distance)*1.71f;
+                long epochStart=Long.parseLong(fields[1]);
+                i = Instant.ofEpochSecond(epochStart);
+                ZonedDateTime z = ZonedDateTime.ofInstant(i, zoneId);
+                int yearMonthKey=Integer.parseInt(DateTimeFormatter.ofPattern("yyyyMM").format(z));
+                context.write(new IntWritable(yearMonthKey),new FloatWritable(fee));
+
+            }
+
+        }
+    }
+
+
+    public static class YearMonthComparator extends WritableComparator {
+
+        public YearMonthComparator() {
+            super(IntWritable.class, true);
         }
 
-        Job job = Job.getInstance(conf, "word count");
+        @SuppressWarnings("rawtypes")
+        @Override
+        public int compare(WritableComparable wc1, WritableComparable wc2) {
+
+            IntWritable key1 = (IntWritable) wc1;
+            IntWritable key2 = (IntWritable) wc2;
+            return key1.compareTo(key2);
+        }
+    }
+
+    public static class YearMonthRevenueReducer
+            extends Reducer<IntWritable, FloatWritable, Text, FloatWritable> {
+        Text yearMonth=new Text();
+        FloatWritable sumF=new FloatWritable();
+        float total=0;
+        @Override
+        public void reduce(IntWritable key, Iterable<FloatWritable> values, Context context)
+                throws IOException, InterruptedException {
+
+            float sum=0f;
+            for (FloatWritable value:values) {
+                sum+=value.get();
+
+            }
+            total+=sum;
+            yearMonth.set(key.toString().substring(0,4)+"-"+key.toString().substring(4));
+            sumF.set(sum);
+            context.write(yearMonth,sumF);
+
+        }
+
+        @Override
+        public void cleanup(Context context)
+                throws IOException, InterruptedException {
+
+            sumF.set(total);
+            context.write(new Text("total"), sumF);
+
+
+            super.cleanup(context);
+        }
+    }
+
+
+    public static Job jobCalculateRevenue(Path input, Path output) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "revenue");
+
+
+
         job.setJarByClass(TaxiRecords.class);
-//        job.setMapperClass(TaxiDriverMapper.class);
-//        job.setReducerClass(TaxiDriverReducer.class);
-//        job.setOutputKeyClass(TaxiIDDatePair.class);
-//        job.setOutputValueClass(Text.class);
-//        job.setGroupingComparatorClass(TaxiIDDateGroupingComparator.class);
+        job.setMapperClass(TaxiRecords.YearMonthRevenueMapper.class);
+        job.setReducerClass(TaxiRecords.YearMonthRevenueReducer.class);
+        job.setMapOutputKeyClass(IntWritable.class);
+        job.setMapOutputValueClass(FloatWritable.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(FloatWritable.class);
+//        job.setPartitionerClass(KeyPartitioner.class);
+        job.setGroupingComparatorClass(YearMonthComparator.class);
+        FileInputFormat.addInputPath(job,input );
+        FileOutputFormat.setOutputPath(job,output );
+        return job;
+    }
 
+
+
+    public static Job jobReconstruction(Path input, Path output) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "reconstruction");
+        job.setJarByClass(TaxiRecords.class);
         job.setMapperClass(TaxiRecords.TaxiDriverMapper.class);
-        //job.setCombinerClass(TaxiRecords.TaxiDriverReducer.class);
         job.setReducerClass(TaxiRecords.TaxiDriverReducer.class);
-
         job.setMapOutputKeyClass(TaxiIDDatePair.class);
         job.setMapOutputValueClass(Text.class);
-
         job.setOutputKeyClass(IntWritable.class);
         job.setOutputValueClass(Text.class);
         job.setPartitionerClass(KeyPartitioner.class);
         job.setGroupingComparatorClass(TaxiIDDateGroupingComparator.class);
+        FileInputFormat.addInputPath(job,input );
+        FileOutputFormat.setOutputPath(job,output );
+        return job;
+    }
 
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileOutputFormat.setOutputPath(job, new Path(args[1]+"/"+System.currentTimeMillis()));
-        //FileOutputFormat.setCompressOutput(job, true);
-        //FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    public static void main(String[] args) throws Exception {
+        BasicConfigurator.configure();
 
+        //conf.setBoolean("mapreduce.map.output.compress", true);
+        //conf.set("mapreduce.map.output.compress.codec", "org.apache.hadoop.io.compress.SnappyCodec");
+        //GenericOptionsParser optionParser = new GenericOptionsParser(conf, args);
+        //String[] remainingArgs = optionParser.getRemainingArgs();
+        if ((args.length != 2) ) {
+            System.err.println("Usage: We need <input path> <output path>");
+            System.exit(2);
+        }
+        //String intermediateFile=args[1]+"/"+System.currentTimeMillis();
+        long time=System.currentTimeMillis();
+        Path input = new Path(args[0]);
+        Path reconstruction = new Path(args[1], "reconstruction"+time);
+        Job job1=jobReconstruction(input,reconstruction);
+        if (!job1.waitForCompletion(true)) {
+            System.exit(2);
+        }
+
+
+        Path output = new Path(args[1], "revenue"+time);
+        Job job2=jobCalculateRevenue(reconstruction,output);
+        if (!job2.waitForCompletion(true)) {
+            System.exit(2);
+        }
 
 //        Path input = new Path(args[0]);
 //        Path output1 = new Path(args[1], "pass1");
@@ -397,7 +536,7 @@ public class TaxiRecords {
 
         //job.setPartitionerClass(TemperaturePartitioner.class);
 
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+        //System.exit(job.waitForCompletion(true) ? 0 : 1);
 
 
         // subsection 1.1 - first map reduce job
